@@ -1,0 +1,124 @@
+{
+  "full": {
+    "tag": "full_60",
+    "n_records": 60,
+    "n_subjects": 39,
+    "mean_baseline_mae_weeks": 1.7371428571428578,
+    "models": {
+      "mean_baseline": {
+        "mae_weeks": 1.7952197852902274,
+        "mae_days": 12.566538497031592,
+        "r": -0.9602785899901924,
+        "skill_vs_baseline": 1.0334324421900976
+      },
+      "ridge": {
+        "mae_weeks": 1.8504908535087259,
+        "mae_days": 12.953435974561081,
+        "r": 0.019605288184768078,
+        "skill_vs_baseline": 1.0652496689606148
+      },
+      "svr_rbf": {
+        "mae_weeks": 1.787883405037534,
+        "mae_days": 12.51518383526274,
+        "r": 0.09433621898677907,
+        "skill_vs_baseline": 1.0292091969788433
+      },
+      "random_forest": {
+        "mae_weeks": 1.798032520184399,
+        "mae_days": 12.586227641290792,
+        "r": -0.024688143677275138,
+        "skill_vs_baseline": 1.0350516152377294
+      },
+      "grad_boost": {
+        "mae_weeks": 1.9403537779902702,
+        "mae_days": 13.582476445931892,
+        "r": 0.013330615656874961,
+        "skill_vs_baseline": 1.1169799708825565
+      }
+    },
+    "ablation": {
+      "hrv_only": {
+        "mae_weeks": 1.8885103472024591,
+        "r": -0.11978873842275743,
+        "skill_vs_baseline": 1.08713589065931
+      },
+      "morph_only": {
+        "mae_weeks": 1.6888281002018135,
+        "r": 0.11498205589598824,
+        "skill_vs_baseline": 0.9721872287345963
+      },
+      "all": {
+        "mae_weeks": 1.798032520184399,
+        "r": -0.024688143677275138,
+        "skill_vs_baseline": 1.0350516152377294
+      }
+    },
+    "permutation_null_rf": {
+      "observed_mae": 1.8504908535087259,
+      "null_mae_mean": 1.7323582327765994,
+      "null_mae_std": 0.11554613338336117,
+      "p_value": 0.8403193612774451
+    }
+  },
+  "quality_gated": {
+    "tag": "n_beats>=40",
+    "n_records": 37,
+    "n_subjects": 27,
+    "mean_baseline_mae_weeks": 1.7217990190963162,
+    "models": {
+      "mean_baseline": {
+        "mae_weeks": 1.8053589003168837,
+        "mae_days": 12.637512302218186,
+        "r": -0.9412671608223503,
+        "skill_vs_baseline": 1.0485305661658606
+      },
+      "ridge": {
+        "mae_weeks": 1.8770046339300686,
+        "mae_days": 13.13903243751048,
+        "r": 0.06299176523971127,
+        "skill_vs_baseline": 1.0901415398152636
+      },
+      "svr_rbf": {
+        "mae_weeks": 1.8351503775227545,
+        "mae_days": 12.84605264265928,
+        "r": 0.06634228183595223,
+        "skill_vs_baseline": 1.0658330950182155
+      },
+      "random_forest": {
+        "mae_weeks": 1.7939610753124369,
+        "mae_days": 12.557727527187058,
+        "r": 0.09050767924190793,
+        "skill_vs_baseline": 1.0419108475587324
+      },
+      "grad_boost": {
+        "mae_weeks": 1.891943684328277,
+        "mae_days": 13.24360579029794,
+        "r": 0.17073429739712964,
+        "skill_vs_baseline": 1.0988179592071443
+      }
+    },
+    "ablation": {
+      "hrv_only": {
+        "mae_weeks": 1.8410074769247848,
+        "r": 0.06897353366364303,
+        "skill_vs_baseline": 1.0692348273557706
+      },
+      "morph_only": {
+        "mae_weeks": 1.9206803260458722,
+        "r": -0.032764626002689666,
+        "skill_vs_baseline": 1.1155078523937938
+      },
+      "all": {
+        "mae_weeks": 1.7939610753124369,
+        "r": 0.09050767924190793,
+        "skill_vs_baseline": 1.0419108475587324
+      }
+    },
+    "permutation_null_rf": {
+      "observed_mae": 1.8770046339300686,
+      "null_mae_mean": 1.8382962861512775,
+      "null_mae_std": 0.18416297887672098,
+      "p_value": 0.5888223552894212
+    }
+  }
+}

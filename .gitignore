@@ -1,0 +1,8 @@
+# data are re-downloadable from PhysioNet; do not commit (~0.5 GB)
+data/
+.venv/
+__pycache__/
+*.pyc
+.cache/
+*.edf
+*.dat

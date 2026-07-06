@@ -1,0 +1,30 @@
+{
+  "n_records": 60,
+  "n_subjects": 39,
+  "ga_range_weeks": [
+    21.0,
+    27.714285714285715
+  ],
+  "ga_std_weeks": 2.097562728331417,
+  "cv": "LeaveOneSubjectOut (grouped by participant)",
+  "results": {
+    "mean_baseline": {
+      "mae_weeks": 1.7952197852902274,
+      "mae_days": 12.566538497031592,
+      "rmse_weeks": 2.1530944181730507,
+      "pearson_r": -0.9602785899901924
+    },
+    "ridge": {
+      "mae_weeks": 1.8504908535087263,
+      "mae_days": 12.953435974561085,
+      "rmse_weeks": 2.294142946840091,
+      "pearson_r": 0.01960528818476788
+    },
+    "random_forest": {
+      "mae_weeks": 1.798032520184399,
+      "mae_days": 12.586227641290792,
+      "rmse_weeks": 2.232586780911433,
+      "pearson_r": -0.024688143677275138
+    }
+  }
+}
