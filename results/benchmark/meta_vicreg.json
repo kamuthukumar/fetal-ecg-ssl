@@ -1,0 +1,860 @@
+[
+  {
+    "dataset": "NInFEA",
+    "ga": 27.0,
+    "subject": 0,
+    "record": 1
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 27.0,
+    "subject": 0,
+    "record": 2
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 27.0,
+    "subject": 0,
+    "record": 3
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 25.0,
+    "subject": 1,
+    "record": 4
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 25.0,
+    "subject": 1,
+    "record": 5
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 21.142857142857142,
+    "subject": 2,
+    "record": 6
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 21.142857142857142,
+    "subject": 2,
+    "record": 7
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 22.571428571428573,
+    "subject": 3,
+    "record": 8
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 24.0,
+    "subject": 4,
+    "record": 9
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 24.571428571428573,
+    "subject": 5,
+    "record": 10
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 24.571428571428573,
+    "subject": 5,
+    "record": 11
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 25.571428571428573,
+    "subject": 6,
+    "record": 12
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 21.714285714285715,
+    "subject": 7,
+    "record": 13
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 21.714285714285715,
+    "subject": 7,
+    "record": 14
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 25.285714285714285,
+    "subject": 8,
+    "record": 15
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 25.285714285714285,
+    "subject": 8,
+    "record": 16
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 24.0,
+    "subject": 9,
+    "record": 17
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 26.857142857142858,
+    "subject": 10,
+    "record": 18
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 22.571428571428573,
+    "subject": 11,
+    "record": 19
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 26.285714285714285,
+    "subject": 12,
+    "record": 20
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 26.285714285714285,
+    "subject": 12,
+    "record": 21
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 25.142857142857142,
+    "subject": 13,
+    "record": 22
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 24.142857142857142,
+    "subject": 14,
+    "record": 23
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 26.857142857142858,
+    "subject": 15,
+    "record": 24
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 26.428571428571427,
+    "subject": 16,
+    "record": 25
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 24.142857142857142,
+    "subject": 17,
+    "record": 26
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 27.142857142857142,
+    "subject": 18,
+    "record": 27
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 26.857142857142858,
+    "subject": 19,
+    "record": 28
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 26.857142857142858,
+    "subject": 19,
+    "record": 29
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 22.428571428571427,
+    "subject": 20,
+    "record": 30
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 27.714285714285715,
+    "subject": 21,
+    "record": 31
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 27.714285714285715,
+    "subject": 21,
+    "record": 32
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 27.714285714285715,
+    "subject": 21,
+    "record": 33
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 25.0,
+    "subject": 22,
+    "record": 34
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 27.0,
+    "subject": 23,
+    "record": 35
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 27.0,
+    "subject": 23,
+    "record": 36
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 25.142857142857142,
+    "subject": 24,
+    "record": 37
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 25.142857142857142,
+    "subject": 24,
+    "record": 38
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 24.0,
+    "subject": 25,
+    "record": 39
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 21.428571428571427,
+    "subject": 26,
+    "record": 40
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 21.428571428571427,
+    "subject": 26,
+    "record": 41
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 24.857142857142858,
+    "subject": 27,
+    "record": 42
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 23.571428571428573,
+    "subject": 28,
+    "record": 43
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 23.571428571428573,
+    "subject": 28,
+    "record": 44
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 23.0,
+    "subject": 29,
+    "record": 45
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 24.571428571428573,
+    "subject": 30,
+    "record": 46
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 21.142857142857142,
+    "subject": 31,
+    "record": 47
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 21.142857142857142,
+    "subject": 31,
+    "record": 48
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 22.0,
+    "subject": 32,
+    "record": 49
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 22.0,
+    "subject": 32,
+    "record": 50
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 24.285714285714285,
+    "subject": 33,
+    "record": 51
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 24.285714285714285,
+    "subject": 33,
+    "record": 52
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 21.0,
+    "subject": 34,
+    "record": 53
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 21.0,
+    "subject": 34,
+    "record": 54
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 25.0,
+    "subject": 35,
+    "record": 55
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 25.0,
+    "subject": 35,
+    "record": 56
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 23.857142857142858,
+    "subject": 36,
+    "record": 57
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 23.0,
+    "subject": 37,
+    "record": 58
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 27.428571428571427,
+    "subject": 38,
+    "record": 59
+  },
+  {
+    "dataset": "NInFEA",
+    "ga": 27.428571428571427,
+    "subject": 38,
+    "record": 60
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a01"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a02"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a03"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a04"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a05"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a06"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a07"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a08"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a09"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a10"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a11"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a12"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a13"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a14"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a15"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a16"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a17"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a18"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a19"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a20"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a21"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a22"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a23"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a24"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a25"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a26"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a27"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a28"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a29"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a30"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a31"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a32"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a33"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a34"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a35"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a36"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a37"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a38"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a39"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a40"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a41"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a42"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a43"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a44"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a45"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a46"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a47"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a48"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a49"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a50"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a51"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a52"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a53"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a54"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a55"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a56"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a57"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a58"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a59"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a60"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a61"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a62"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a63"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a64"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a65"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a66"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a67"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a68"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a69"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a70"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a71"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a72"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a73"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a74"
+  },
+  {
+    "dataset": "CinC2013",
+    "ga": null,
+    "subject": null,
+    "record": "a75"
+  },
+  {
+    "dataset": "NI_FECG_DB",
+    "ga": null,
+    "subject": 0,
+    "record": "ecgca102"
+  },
+  {
+    "dataset": "NI_FECG_DB",
+    "ga": null,
+    "subject": 0,
+    "record": "ecgca115"
+  },
+  {
+    "dataset": "NI_FECG_DB",
+    "ga": null,
+    "subject": 0,
+    "record": "ecgca127"
+  },
+  {
+    "dataset": "NI_FECG_DB",
+    "ga": null,
+    "subject": 0,
+    "record": "ecgca154"
+  },
+  {
+    "dataset": "NI_FECG_DB",
+    "ga": null,
+    "subject": 0,
+    "record": "ecgca192"
+  },
+  {
+    "dataset": "NI_FECG_DB",
+    "ga": null,
+    "subject": 0,
+    "record": "ecgca244"
+  },
+  {
+    "dataset": "NI_FECG_DB",
+    "ga": null,
+    "subject": 0,
+    "record": "ecgca252"
+  },
+  {
+    "dataset": "NI_FECG_DB",
+    "ga": null,
+    "subject": 0,
+    "record": "ecgca274"
+  }
+]

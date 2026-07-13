@@ -1,0 +1,20 @@
+{
+  "encoder": "mae",
+  "n_records": 143,
+  "ga_structure": {
+    "n": 60,
+    "silhouette": -0.01809046044945717,
+    "p_perm": 0.065,
+    "ga_range": [
+      21.0,
+      27.714285714285715
+    ]
+  },
+  "hardware": {
+    "silhouette_dataset": 0.11259058862924576,
+    "p_perm": 0.0,
+    "linear_probe_acc": 0.930049261083744,
+    "chance": 0.3333333333333333,
+    "n_datasets": 3
+  }
+}

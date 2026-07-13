@@ -34,7 +34,30 @@ SPECS = {
         records=[str(n) for n in range(1, 61)],
         exts=["dat", "hea"],
     ),
+    # Non-Invasive Fetal ECG Database: 55 EDF recordings from a single subject
+    # across 21-40 wk (longitudinal). Record names read from the RECORDS file.
+    "nifecgdb": dict(
+        url=f"{BASE}/nifecgdb/1.0.0",
+        records="@RECORDS",
+        exts=[""],  # names in RECORDS already include the .edf suffix
+    ),
+    # Non-Invasive Fetal ECG Arrhythmia Database: 26 WFDB records (12 arrhythmic).
+    "nifeadb": dict(
+        url=f"{BASE}/nifeadb/1.0.0",
+        records="@RECORDS",
+        exts=["dat", "hea"],
+    ),
 }
+
+
+def _record_list(spec):
+    """Resolve a spec's record list, fetching the RECORDS file if requested."""
+    recs = spec["records"]
+    if recs == "@RECORDS":
+        import urllib.request
+        with urllib.request.urlopen(f"{spec['url']}/RECORDS", timeout=60) as fh:
+            return [ln.strip() for ln in fh.read().decode().splitlines() if ln.strip()]
+    return recs
 
 
 def _fetch(url, dest):
@@ -50,10 +73,12 @@ def download(name):
     spec = SPECS[name]
     dest = DATA_DIR / name
     dest.mkdir(parents=True, exist_ok=True)
-    print(f"[{name}] {len(spec['records'])} records -> {dest}")
-    for r in spec["records"]:
+    records = _record_list(spec)
+    print(f"[{name}] {len(records)} records -> {dest}")
+    for r in records:
         for ext in spec["exts"]:
-            _fetch(f"{spec['url']}/{r}.{ext}", dest / f"{r}.{ext}")
+            fname = r if ext == "" else f"{r}.{ext}"
+            _fetch(f"{spec['url']}/{fname}", dest / Path(fname).name)
     print(f"[{name}] done")
 
 

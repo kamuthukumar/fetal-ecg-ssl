@@ -1,0 +1,20 @@
+{
+  "encoder": "simclr",
+  "n_records": 143,
+  "ga_structure": {
+    "n": 60,
+    "silhouette": -0.0160664152354002,
+    "p_perm": 0.07,
+    "ga_range": [
+      21.0,
+      27.714285714285715
+    ]
+  },
+  "hardware": {
+    "silhouette_dataset": -0.0030235161539167166,
+    "p_perm": 0.012,
+    "linear_probe_acc": 0.9435960591133006,
+    "chance": 0.3333333333333333,
+    "n_datasets": 3
+  }
+}

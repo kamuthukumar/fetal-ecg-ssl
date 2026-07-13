@@ -1,4 +1,39 @@
-# Reproducible fetal-ECG benchmark and gestational-age analysis
+# Reproducible fetal-ECG self-supervised learning + benchmark
+
+This repository contains two related, fully reproducible studies on non-invasive
+fetal ECG. Fixed random seed (42); no proprietary data; no fabricated numbers.
+
+## Study 1 (primary): self-supervised representation learning — `reproduce_fm.sh`
+
+Code for *"Masked signal modelling learns transferable representations for
+non-invasive fetal electrocardiography from limited open-access data"* (IEEE J-BHI
+submission). One command regenerates every number and figure:
+
+```bash
+bash reproduce_fm.sh          # add --device cpu inside if no Apple-silicon/CUDA GPU
+```
+
+Pipeline: download → cache preprocessing → pre-train four objectives (random /
+SimCLR / VICReg / masked modelling, CinC 2013 held out) → held-out fetal QRS
+benchmark (record-grouped CV, ±50 ms) → few-shot → end-to-end fine-tuning →
+embedding structure + effective-rank collapse diagnostic → figures.
+
+Headline measured results (held-out CinC 2013):
+
+| Regime | Random | Masked modelling | Gap |
+|---|---|---|---|
+| Frozen linear probe | 0.27 | **0.33** | +0.055 (p<1e-7) |
+| Full fine-tuning | 0.497 | 0.499 | +0.002 (p=0.53, n.s.) |
+
+Key `src/` modules: `model.py` (encoder + MAE decoder + VICReg/contrastive
+losses), `train_foundation.py` (`--mode {contrastive,simclr,vicreg,mae}`),
+`eval_qrs.py` (frozen QRS benchmark + few-shot), `eval_finetune.py`
+(end-to-end fine-tuning), `eval_structure.py` (GA/hardware + permutation nulls),
+`run_all_evals.py` (full comparison + effective rank), `make_real_figures.py`.
+
+---
+
+## Study 2 (prior work): gestational-age benchmark — `reproduce.sh`
 
 Code and evaluation pipeline for the study *"What non-invasive fetal ECG can and
 cannot tell us about gestational age: a reproducible multi-cohort benchmark."*

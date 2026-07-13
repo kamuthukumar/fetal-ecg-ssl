@@ -1,4 +1,4 @@
-# data are re-downloadable from PhysioNet; do not commit (~0.5 GB)
+# data are re-downloadable from PhysioNet; do not commit (~0.6 GB)
 data/
 .venv/
 __pycache__/
@@ -6,3 +6,13 @@ __pycache__/
 .cache/
 *.edf
 *.dat
+# regenerable caches / large artifacts (produced by reproduce_fm.sh)
+results/cache/
+*.pkl
+results/**/embeddings.npy
+results/benchmark/emb_*.npy
+# keep small JSON results and figures; keep model checkpoints out of git
+results/foundation*/*.pt
+# synthetic figures from the deprecated (fabricated) pipeline — not part of the paper
+results/manuscript_figs/
+results/poc/

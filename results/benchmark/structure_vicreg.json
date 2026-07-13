@@ -1,0 +1,20 @@
+{
+  "encoder": "vicreg",
+  "n_records": 143,
+  "ga_structure": {
+    "n": 60,
+    "silhouette": -0.04558798298239708,
+    "p_perm": 0.487,
+    "ga_range": [
+      21.0,
+      27.714285714285715
+    ]
+  },
+  "hardware": {
+    "silhouette_dataset": 0.18601731956005096,
+    "p_perm": 0.0,
+    "linear_probe_acc": 0.9298029556650246,
+    "chance": 0.3333333333333333,
+    "n_datasets": 3
+  }
+}
