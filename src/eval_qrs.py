@@ -67,17 +67,20 @@ def build_labeled_windows(win_sec=WIN_SEC, fs=FS, pool=POOL):
     return items
 
 
-def make_encoder(kind, ckpt, device):
+def make_encoder(kind, ckpt, device, use_transformer=True, input_norm="instance"):
     import torch
     from model import FetalECGFM
     torch.manual_seed(SEED)
-    model = FetalECGFM(n_input_channels=4, d_model=256, proj_dim=64, pool=POOL).to(device)
-    if kind in ("ssl", "simclr"):
+    model = FetalECGFM(n_input_channels=4, d_model=256, proj_dim=64, pool=POOL,
+                       use_transformer=use_transformer, input_norm=input_norm).to(device)
+    if kind in ("ssl", "simclr") and ckpt:
         if not Path(ckpt).exists():
             raise FileNotFoundError(f"checkpoint not found: {ckpt}")
         state = torch.load(ckpt, map_location=device)
         state = state.get("model_state", state)
-        model.load_state_dict(state)
+        missing, unexpected = model.load_state_dict(state, strict=False)
+        if missing:
+            print(f"  load missing keys: {list(missing)[:6]}...")
     model.eval()
     for p in model.parameters():
         p.requires_grad_(False)
@@ -138,16 +141,24 @@ def _peak_pick(prob, thr, min_dist_tok):
     return np.array(idx, dtype=int)
 
 
-def score_records(prob_by_record, ref_by_record, thr, pool=POOL, fs=FS):
+def score_records(prob_by_record, ref_by_record, thr, pool=POOL, fs=FS, tol_ms=None,
+                  return_peaks=False):
     """F1 per record given per-token probabilities and reference beat samples."""
     min_dist_tok = int(0.30 * fs / pool)     # >=300 ms between fetal beats
-    tol = TOL_MS / 1000.0 * fs               # +/-50 ms in samples
+    if tol_ms is None:
+        tol_ms = TOL_MS
+    tol = tol_ms / 1000.0 * fs
     per_rec = {}
+    peaks_out = {}
     for rec, prob in prob_by_record.items():
         peaks_tok = _peak_pick(prob, thr, min_dist_tok)
         peaks_samp = peaks_tok * pool + pool // 2
         _, _, _, f1 = _match_f1(peaks_samp, ref_by_record[rec], tol)
         per_rec[rec] = f1
+        if return_peaks:
+            peaks_out[rec] = peaks_samp
+    if return_peaks:
+        return per_rec, peaks_out
     return per_rec
 
 
@@ -268,7 +279,7 @@ def _best_threshold(head, feats, items, idx, groups, device):
 
 
 def few_shot(encoder_kind, ckpt, fractions=(0.05, 0.1, 0.25, 0.5, 1.0),
-             device_str="mps", n_splits=5):
+             device_str="mps", n_splits=5, n_repeats=1, seed=SEED):
     """Few-shot QRS detection: train the head on a fraction of *records*.
 
     For each CV fold, subsample the training records to each fraction (grouped by
@@ -284,7 +295,7 @@ def few_shot(encoder_kind, ckpt, fractions=(0.05, 0.1, 0.25, 0.5, 1.0),
     feats = extract_token_features(model, items, device)
     d = feats[0].shape[1]
     groups = np.array([it["record"] for it in items])
-    rng = np.random.default_rng(SEED)
+    rng = np.random.default_rng(seed)
 
     ref_by_record = {}
     for it in items:
@@ -293,24 +304,29 @@ def few_shot(encoder_kind, ckpt, fractions=(0.05, 0.1, 0.25, 0.5, 1.0),
 
     gkf = GroupKFold(n_splits=n_splits)
     per_frac = {f: [] for f in fractions}
+    n_train_recs = {f: [] for f in fractions}
     for tr, te in gkf.split(np.arange(len(items)), groups=groups):
         tr_recs = np.array(sorted(set(groups[tr])))
         for f in fractions:
             k = max(1, int(round(f * len(tr_recs))))
-            chosen = set(rng.choice(tr_recs, size=k, replace=False))
-            tri = [i for i in tr if groups[i] in chosen]
-            Xtr = np.concatenate([feats[i] for i in tri], axis=0)
-            ytr = np.concatenate([items[i]["token_label"] for i in tri], axis=0)
-            head = _fit_head(Xtr, ytr, d, device)
-            thr = _best_threshold(head, feats, items, tri, groups, device)
-            prob = _predict_prob_by_record(head, feats, items, te, device)
-            ref_te = {r: ref_by_record[r] for r in prob}
-            per_rec = score_records(prob, ref_te, thr)
-            per_frac[f].append(float(np.mean(list(per_rec.values()))))
+            for _rep in range(n_repeats):
+                chosen = set(rng.choice(tr_recs, size=k, replace=False))
+                tri = [i for i in tr if groups[i] in chosen]
+                Xtr = np.concatenate([feats[i] for i in tri], axis=0)
+                ytr = np.concatenate([items[i]["token_label"] for i in tri], axis=0)
+                head = _fit_head(Xtr, ytr, d, device)
+                thr = _best_threshold(head, feats, items, tri, groups, device)
+                prob = _predict_prob_by_record(head, feats, items, te, device)
+                ref_te = {r: ref_by_record[r] for r in prob}
+                per_rec = score_records(prob, ref_te, thr)
+                per_frac[f].append(float(np.mean(list(per_rec.values()))))
+                n_train_recs[f].append(int(k))
     return {
         "fractions": list(fractions),
         "mean": [float(np.mean(per_frac[f])) for f in fractions],
         "std": [float(np.std(per_frac[f])) for f in fractions],
+        "n_train_records": {str(f): n_train_recs[f] for f in fractions},
+        "n_repeats": int(n_repeats),
     }
 
 

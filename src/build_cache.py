@@ -7,6 +7,7 @@ ablation, the random baseline, and all evaluations reload in seconds.
 
     python src/build_cache.py            # cache every available dataset
 """
+import os
 import pickle
 import sys
 from pathlib import Path
@@ -15,7 +16,7 @@ SRC = Path(__file__).resolve().parent
 ROOT = SRC.parent
 sys.path.insert(0, str(SRC))
 
-CACHE = ROOT / "results" / "cache" / "records.pkl"
+CACHE = Path(os.environ.get("FECG_CACHE", ROOT / "results" / "cache" / "records.pkl"))
 
 
 def build():

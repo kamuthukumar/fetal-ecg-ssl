@@ -1,0 +1,104 @@
+{
+  "splits": {
+    "default": {
+      "random": 0.2697,
+      "simclr": 0.3162,
+      "mae": 0.3251,
+      "mae-random": {
+        "delta": 0.0554,
+        "dz": 0.75,
+        "p": 1.4e-07
+      },
+      "simclr-random": {
+        "delta": 0.0465,
+        "dz": 0.72,
+        "p": 9.6e-08
+      },
+      "mae-simclr": {
+        "delta": 0.009,
+        "dz": 0.22,
+        "p": 0.14
+      }
+    },
+    "1": {
+      "random": 0.2685,
+      "simclr": 0.3168,
+      "mae": 0.3239,
+      "mae-random": {
+        "delta": 0.0555,
+        "dz": 0.8,
+        "p": 1.5e-08
+      },
+      "simclr-random": {
+        "delta": 0.0483,
+        "dz": 0.78,
+        "p": 1.5e-08
+      },
+      "mae-simclr": {
+        "delta": 0.0072,
+        "dz": 0.17,
+        "p": 0.19
+      }
+    },
+    "2": {
+      "random": 0.2691,
+      "simclr": 0.3207,
+      "mae": 0.3278,
+      "mae-random": {
+        "delta": 0.0586,
+        "dz": 0.84,
+        "p": 5.4e-09
+      },
+      "simclr-random": {
+        "delta": 0.0515,
+        "dz": 0.8,
+        "p": 5.2e-09
+      },
+      "mae-simclr": {
+        "delta": 0.0071,
+        "dz": 0.16,
+        "p": 0.26
+      }
+    },
+    "3": {
+      "random": 0.2698,
+      "simclr": 0.3159,
+      "mae": 0.3256,
+      "mae-random": {
+        "delta": 0.0557,
+        "dz": 0.81,
+        "p": 1.4e-08
+      },
+      "simclr-random": {
+        "delta": 0.0461,
+        "dz": 0.71,
+        "p": 5.9e-08
+      },
+      "mae-simclr": {
+        "delta": 0.0097,
+        "dz": 0.23,
+        "p": 0.074
+      }
+    }
+  },
+  "maternal_fp": {
+    "random": {
+      "n_records": 75,
+      "n_fp": 6433,
+      "n_fp_on_maternal": 2520,
+      "frac": 0.39173014145810664
+    },
+    "simclr": {
+      "n_records": 75,
+      "n_fp": 6030,
+      "n_fp_on_maternal": 2269,
+      "frac": 0.3762852404643449
+    },
+    "mae": {
+      "n_records": 75,
+      "n_fp": 5994,
+      "n_fp_on_maternal": 2264,
+      "frac": 0.377711044377711
+    }
+  }
+}

@@ -98,7 +98,7 @@ def predict_prob_by_record(det, items, idx, device, batch_size=16):
     return prob_by_record
 
 
-def run(init_kind, ckpt, device_str="mps", epochs=25, out_dir=None):
+def run(init_kind, ckpt, device_str="mps", epochs=25, out_dir=None, label_frac=1.0, seed=SEED):
     import torch
     from sklearn.model_selection import GroupKFold
     from eval_qrs import build_labeled_windows, score_records
@@ -116,7 +116,17 @@ def run(init_kind, ckpt, device_str="mps", epochs=25, out_dir=None):
 
     gkf = GroupKFold(n_splits=5)
     fold_f1 = {}
+    rng = np.random.default_rng(seed)
+    n_used = []
     for fold, (tr, te) in enumerate(gkf.split(np.arange(len(items)), groups=groups)):
+        if label_frac < 1.0:
+            tr_recs = np.array(sorted(set(groups[tr])))
+            k = max(1, int(round(label_frac * len(tr_recs))))
+            chosen = set(rng.choice(tr_recs, size=k, replace=False))
+            tr = np.array([i for i in tr if groups[i] in chosen])
+            n_used.append(int(k))
+        else:
+            n_used.append(int(len(set(groups[tr]))))
         det = Detector(init_kind, ckpt, device)
         train_fold(det, items, tr, device, epochs=epochs)
         # threshold on train fold
@@ -139,6 +149,8 @@ def run(init_kind, ckpt, device_str="mps", epochs=25, out_dir=None):
                    f1_mean=float(f1s.mean()), f1_std=float(f1s.std()),
                    f1_median=float(np.median(f1s)),
                    frac_below_0p5=float((f1s < 0.5).mean()),
+                   label_frac=float(label_frac),
+                   n_train_records_per_fold=n_used,
                    per_record={r: float(fold_f1[r]) for r in sorted(fold_f1)})
     if out_dir:
         out = Path(out_dir); out.mkdir(parents=True, exist_ok=True)
@@ -154,10 +166,12 @@ def parse_args():
     p.add_argument("--ckpt", type=str, default=str(ROOT / "results" / "foundation_mae" / "final_model.pt"))
     p.add_argument("--device", type=str, default="mps")
     p.add_argument("--epochs", type=int, default=25)
+    p.add_argument("--label_frac", type=float, default=1.0,
+                   help="Fraction of training records used for fine-tuning.")
     p.add_argument("--out_dir", type=str, default=str(ROOT / "results" / "benchmark"))
     return p.parse_args()
 
 
 if __name__ == "__main__":
     a = parse_args()
-    run(a.init, a.ckpt, a.device, a.epochs, a.out_dir)
+    run(a.init, a.ckpt, a.device, a.epochs, a.out_dir, label_frac=a.label_frac)

@@ -1,119 +1,148 @@
-# Reproducible fetal-ECG self-supervised learning + benchmark
+# Self-Supervised Pre-Training for Non-Invasive Fetal ECG
 
-This repository contains two related, fully reproducible studies on non-invasive
-fetal ECG. Fixed random seed (42); no proprietary data; no fabricated numbers.
+Reproducible code, measured result files, and publication figures for:
 
-## Study 1 (primary): self-supervised representation learning — `reproduce_fm.sh`
+> **Self-Supervised Pre-Training for Non-Invasive Fetal
+> Electrocardiography from Limited Open-Access Data: A Cross-Dataset
+> QRS-Transfer Benchmark**
 
-Code for *"Masked signal modelling learns transferable representations for
-non-invasive fetal electrocardiography from limited open-access data"* (IEEE J-BHI
-submission). One command regenerates every number and figure:
+The study compares SimCLR, VICReg, and masked signal modelling on one encoder.
+Pre-training uses 60 NInFEA records and eight NI-FECG files; all 75 annotated
+PhysioNet/CinC 2013 set-a records are held out for record-grouped evaluation.
+All data are open access. Random seeds, record lists, configurations, per-record
+scores, revision analyses, and 600 dpi figures are included.
 
-```bash
-bash reproduce_fm.sh          # add --device cpu inside if no Apple-silicon/CUDA GPU
-```
+## Main findings
 
-Pipeline: download → cache preprocessing → pre-train four objectives (random /
-SimCLR / VICReg / masked modelling, CinC 2013 held out) → held-out fetal QRS
-benchmark (record-grouped CV, ±50 ms) → few-shot → end-to-end fine-tuning →
-embedding structure + effective-rank collapse diagnostic → figures.
+- All three self-supervised objectives beat random initialisation with a frozen
+  linear probe at the prespecified ±50 ms matching tolerance.
+- Masked modelling reaches mean F1 **0.325** versus **0.270** for random
+  initialisation: ΔF1 **+0.055**, paired Cohen's dz **0.75**, bootstrap 95% CI
+  **[0.039, 0.072]**, two-sided Wilcoxon **p = 1.36e-7**.
+- Its numeric edge over SimCLR is not significant: ΔF1 **+0.009**,
+  **p = 0.142**. Across three matched-budget seeds the two objectives remain
+  tied.
+- Without instance normalisation, SimCLR falls below random, whereas masked
+  modelling does not collapse. Three no-normalisation masked runs give
+  F1 **0.359 ± 0.005**.
+- The representation result is not a detector-performance claim. On the same
+  75 records, a supervised MCG-Net-style model and 1-D U-Net reach mean F1
+  **0.912** and **0.918**, respectively; FastICA and template-subtraction
+  baselines reach **0.592–0.683**.
+- Full end-to-end fine-tuning erases the pre-training gap. Linear CKA shows the
+  two initialisations converging to similar representations.
+- Embeddings do not encode gestational age and remain acquisition-dataset
+  separable. Transfer to the five-record ADfECGDB device does not beat random.
 
-Headline measured results (held-out CinC 2013):
+![Nine-method fetal QRS comparison](results/real_figs/fig_baselines.png)
 
-| Regime | Random | Masked modelling | Gap |
-|---|---|---|---|
-| Frozen linear probe | 0.27 | **0.33** | +0.055 (p<1e-7) |
-| Full fine-tuning | 0.497 | 0.499 | +0.002 (p=0.53, n.s.) |
+## Evaluation protocol
 
-Key `src/` modules: `model.py` (encoder + MAE decoder + VICReg/contrastive
-losses), `train_foundation.py` (`--mode {contrastive,simclr,vicreg,mae}`),
-`eval_qrs.py` (frozen QRS benchmark + few-shot), `eval_finetune.py`
-(end-to-end fine-tuning), `eval_structure.py` (GA/hardware + permutation nulls),
-`run_all_evals.py` (full comparison + effective rank), `make_real_figures.py`.
+- **Pre-training:** NInFEA (60 records, 39 subjects) plus eight NI-FECG files.
+- **Held-out benchmark:** all 75 CinC 2013 set-a records with `.fqrs`
+  annotations; no quality screening.
+- **Cross-validation:** record-grouped five-fold CV; each CinC record is a
+  distinct case.
+- **Detection:** frozen encoder plus linear token classifier; threshold selected
+  on each training fold; 300 ms refractory period.
+- **Primary score:** per-record fetal-QRS F1 with ±50 ms matching.
+- **Statistics:** two-sided paired Wilcoxon tests, paired Cohen's dz, and
+  record-level percentile bootstrap confidence intervals.
 
----
+![Tolerance sensitivity](results/real_figs/fig_tolerance.png)
 
-## Study 2 (prior work): gestational-age benchmark — `reproduce.sh`
+## Reproduce
 
-Code and evaluation pipeline for the study *"What non-invasive fetal ECG can and
-cannot tell us about gestational age: a reproducible multi-cohort benchmark."*
-
-Everything here runs on three **open-access PhysioNet datasets** and reproduces
-every number and figure in the manuscript from the raw signals. No proprietary
-data, no pretrained weights, fixed random seed (42).
-
-## What this repository shows
-
-1. **A reproducible non-invasive fetal QRS detection benchmark** on two datasets
-   with genuine reference annotations:
-   - **ADfECGDB** (direct fetal scalp electrode): F1 = **0.91** (median 0.93).
-   - **PhysioNet/CinC 2013 set-a** (75 records, expert `.fqrs`): F1 = **0.68**
-     mean / **0.82** median.
-   The method is a fully classical, transparent pipeline (band-pass, adaptive
-   maternal-beat template subtraction, energy-envelope fetal QRS detection with
-   RR-consistency cleanup). No ground truth is used during extraction.
-
-2. **A rigorous negative result on gestational-age (GA) estimation.** Using
-   interpretable HRV + morphology features from the extracted fetal ECG on
-   **NInFEA** (60 records, 39 subjects, 21–27 wk), GA is **not** predictable
-   above the mean-only baseline under **subject-grouped** cross-validation:
-   - MAE = **1.8 weeks** (~12.6 days) vs mean-baseline MAE = 1.7–1.8 weeks.
-   - Pearson r ≈ **0** across five different estimators.
-   - Subject-level **permutation test**: observed MAE sits inside the
-     label-shuffled null (p ≈ 0.84).
-   We also demonstrate how **record-level** cross-validation leaks identical GA
-   labels between recordings of the same mother — the most likely origin of
-   previously reported sub-day accuracies.
-
-Per-record GA labels for NInFEA are transcribed from the dataset's companion
-paper (Sulas et al., *Scientific Data* 8:30, 2021, Table 3) in
-`src/ninfea_labels.py`.
-
-## Quick start
+Python 3.9 or newer is recommended.
 
 ```bash
-bash reproduce.sh
-```
-
-This creates a virtual environment, downloads the data (~0.5 GB), and writes all
-results to `results/` and figures to `figures/`.
-
-### Manual steps
-
-```bash
-python3 -m venv .venv && source .venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-python src/download_data.py          # ADfECGDB, NInFEA, CinC 2013
-python src/eval_extraction.py        # -> results/extraction_*.{csv,json}
-python src/build_ga_model.py         # -> results/ninfea_*.csv, ga_model_summary.json
-python src/robust_ga_analysis.py     # -> results/robust_ga_report.json
-python src/leakage_diagnostic.py     # subject-grouped vs record-level CV
-python src/make_figures.py           # -> figures/*.png
+
+# Original pre-training, frozen probes, fine-tuning, structure tests, figures
+bash reproduce_fm.sh
+
+# Reviewer-requested analyses using the released checkpoints
+DEVICE=mps bash run_revision_all.sh
 ```
 
-If PhysioNet rate-limits bulk downloads, re-run `download_data.py`; it skips
-files already present. Verify integrity against each dataset's `SHA256SUMS.txt`.
+Use `DEVICE=cuda` on CUDA machines or `DEVICE=cpu` when no accelerator is
+available. The full retraining sequence is intentionally expensive. Individual
+revision stages can be run separately:
 
-## Layout
+```bash
+bash train_revision.sh          # matched budget, seeds, masks, physics, CNN-only
+bash train_revision_seeds.sh    # extra SimCLR seed
+bash train_revision2.sh         # no-normalisation masked run
+bash train_revision3.sh         # two more no-normalisation masked seeds
+python3 src/score_round2.py      # score second-round checkpoints
+python3 src/direct_baselines.py # FastICA, TS+FastICA, MCG-Net-style, U-Net
+python3 src/revision_round2.py  # signal quality, rhythm, noise and CKA
+python3 src/make_revision_figures.py
+```
 
-| Path | Purpose |
-|------|---------|
-| `src/download_data.py` | fetch the three PhysioNet datasets |
-| `src/edf_io.py` | dependency-free EDF/EDF+ reader (ADfECGDB + fetal beat annotations) |
-| `src/fecg_extraction.py` | maternal cancellation + fetal QRS detection + F1 scoring |
-| `src/features.py` | HRV and morphology features from the extracted fetal ECG |
-| `src/ninfea_labels.py` | per-record NInFEA gestational-age labels (companion paper) |
-| `src/build_ga_model.py` | subject-grouped GA regression |
-| `src/robust_ga_analysis.py` | permutation null, ablations, quality gating |
-| `src/leakage_diagnostic.py` | subject-grouped vs leaky record-level CV |
-| `src/make_figures.py` | manuscript figures |
+The failed larger-batch VICReg attempts and the unfinished CinC set-b scale
+experiment are not reported as scientific results.
 
-## Data availability
+## Results and figures
 
-- ADfECGDB — https://physionet.org/content/adfecgdb/1.0.0/
-- NInFEA — https://physionet.org/content/ninfea/1.0.0/
-- PhysioNet/CinC 2013 — https://physionet.org/content/challenge-2013/1.0.0/
+- `results/benchmark/`: original per-record benchmark scores and summaries.
+- `results/revision/`: reviewer-requested JSON results, including pairwise
+  statistics, tolerance sensitivity, repeated few-shot draws, low-label
+  fine-tuning, direct baselines, signal-quality/rhythm analyses, CKA, and
+  no-normalisation runs.
+- `results/real_figs/`: publication figures at 600 dpi.
+
+Important machine-readable outputs:
+
+- `results/revision/pairwise_stats.json`
+- `results/revision/qrs_tolerances.json`
+- `results/revision/direct_baselines.json`
+- `results/revision/round2_analyses.json`
+- `results/revision/round2_ckpts.json`
+- `results/revision/lowlabel_finetune.json`
+- `results/revision/audit_splits_maternal.json`
+
+![Input-gain sensitivity](results/real_figs/fig_amplitude.png)
+
+![Few-shot frozen-probe performance](results/real_figs/fig_fewshot_real.png)
+
+## Code map
+
+- `src/model.py`: multi-scale CNN + Transformer encoder, projection head,
+  masked-signal decoder, SimCLR and VICReg objectives.
+- `src/train_foundation.py`: all pre-training modes and component ablations.
+- `src/eval_qrs.py`: frozen QRS probe, record-grouped folds and tolerance sweep.
+- `src/eval_finetune.py`: end-to-end and low-label fine-tuning.
+- `src/eval_structure.py`: effective rank, gestational-age and hardware probes.
+- `src/direct_baselines.py`: FastICA, template subtraction, MCG-Net-style and
+  1-D U-Net baselines.
+- `src/revision_experiments.py`: paired effects, fold reassignment, few-shot
+  repeats and checkpoint scoring.
+- `src/revision_audit.py`: split checks and maternal-QRS false-positive overlap.
+- `src/revision_round2.py`: amplitude/rhythm strata, controlled noise and CKA.
+- `src/amplitude_causal.py`: controlled input-gain perturbation.
+- `src/make_revision_figures.py`: 600 dpi revised figures.
+
+## Data
+
+- [NInFEA v1.0.0](https://doi.org/10.13026/c4n5-3b04)
+- [Non-Invasive Fetal ECG Database v1.0.0](https://doi.org/10.13026/C2X30H)
+- [PhysioNet/CinC Challenge 2013](https://physionet.org/content/challenge-2013/1.0.0/)
+- [ADfECGDB](https://physionet.org/content/adfecgdb/1.0.0/)
+
+Raw data, preprocessing caches, and model checkpoints are excluded from Git
+because they are large and reproducible. PhysioNet datasets retain their own
+licenses.
+
+## Prior gestational-age benchmark
+
+The repository also retains the earlier transparent classical-extraction and
+gestational-age pipeline. Run `bash reproduce.sh`; its modules are documented
+in `src/eval_extraction.py`, `src/build_ga_model.py`,
+`src/robust_ga_analysis.py`, and `src/leakage_diagnostic.py`.
 
 ## License
 
-MIT (see `LICENSE`). PhysioNet datasets carry their own licenses.
+MIT (see `LICENSE`).

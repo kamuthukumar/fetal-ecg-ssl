@@ -26,9 +26,10 @@ sys.path.insert(0, str(SRC))
 from data_loader import load_all_records, DATA_ROOT
 from augmentations import DEFAULT_AUGMENT
 
-SEED = 42
-random.seed(SEED)
-np.random.seed(SEED)
+
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
 
 
 def parse_args():
@@ -42,7 +43,8 @@ def parse_args():
     p.add_argument("--proj_dim", type=int, default=64)
     p.add_argument("--temperature", type=float, default=0.1)
     p.add_argument("--device", type=str, default="cpu")
-    p.add_argument("--pretrain_datasets", type=str, default="NInFEA,NI_FECG_DB,NIFEA_ARR",
+    p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--pretrain_datasets", type=str, default="NInFEA,NI_FECG_DB",
                    help="Comma-separated datasets used for SSL pre-training. "
                         "CinC2013 and ADfECGDB are held out for downstream eval.")
     p.add_argument("--simclr", action="store_true",
@@ -54,6 +56,11 @@ def parse_args():
                         "vicreg=variance-covariance anti-collapse; "
                         "mae=masked signal reconstruction.")
     p.add_argument("--mask_ratio", type=float, default=0.5, help="MAE token mask ratio.")
+    p.add_argument("--input_norm", type=str, default="instance",
+                   choices=["instance", "none", "layernorm"],
+                   help="Input normalisation inside the encoder.")
+    p.add_argument("--no_transformer", action="store_true",
+                   help="CNN-only ablation: skip the Transformer encoder.")
     p.add_argument("--out_dir", type=str, default=str(ROOT / "results" / "foundation"))
     return p.parse_args()
 
@@ -218,6 +225,7 @@ def train_one_epoch_vicreg(model, dataloader, optimizer, augment, device, epoch,
     from model import vicreg_loss
     model.train()
     total, n = 0.0, 0
+    parts_acc = {"sim": 0.0, "std": 0.0, "cov": 0.0, "std_mean": 0.0}
     for i in range(0, len(dataloader), batch_size):
         batch = dataloader[i:i + batch_size]
         if len(batch) < 2:
@@ -225,10 +233,13 @@ def train_one_epoch_vicreg(model, dataloader, optimizer, augment, device, epoch,
         v1, v2, _ = collate_batch(batch, augment, device)
         z1 = model.project_unnorm(v1)
         z2 = model.project_unnorm(v2)
-        loss = vicreg_loss(z1, z2)
+        loss, parts = vicreg_loss(z1, z2, return_parts=True)
         optimizer.zero_grad(); loss.backward(); optimizer.step()
         total += loss.item(); n += 1
-    return total / max(n, 1)
+        for k in parts_acc:
+            parts_acc[k] += parts[k]
+    n = max(n, 1)
+    return total / n, {k: v / n for k, v in parts_acc.items()}
 
 
 def main():
@@ -243,10 +254,16 @@ def main():
         print("ERROR: PyTorch is required. Install with: pip install torch")
         sys.exit(1)
 
+    set_seed(args.seed)
     device = torch.device(args.device)
-    torch.manual_seed(SEED)
+    torch.manual_seed(args.seed)
     if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(SEED)
+        torch.cuda.manual_seed_all(args.seed)
+    if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        try:
+            torch.mps.manual_seed(args.seed)
+        except Exception:
+            pass
 
     # Load data (CinC2013 and ADfECGDB are held out for downstream evaluation)
     pretrain_datasets = [d.strip() for d in args.pretrain_datasets.split(",") if d.strip()]
@@ -262,7 +279,10 @@ def main():
     from model import FetalECGFM, SignalDecoder
     from augmentations import GENERIC_AUGMENT
     n_ch = 4
-    model = FetalECGFM(n_input_channels=n_ch, d_model=args.d_model, proj_dim=args.proj_dim).to(device)
+    model = FetalECGFM(
+        n_input_channels=n_ch, d_model=args.d_model, proj_dim=args.proj_dim,
+        use_transformer=not args.no_transformer, input_norm=args.input_norm,
+    ).to(device)
     decoder = None
     params = list(model.parameters())
     if mode == "mae":
@@ -274,28 +294,41 @@ def main():
     optimizer = torch.optim.AdamW(params, lr=args.lr, weight_decay=0.01)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs, eta_min=args.lr * 0.01)
 
+    # Reported SimCLR and VICReg use the generic jitter/scale view generator.
+    # Physiological augmentations + GA-weighted InfoNCE are used only in
+    # --mode contrastive (reported as an explicit ablation). Masked modelling
+    # reconstructs unaugmented windows (masking is the corruption).
     augment = GENERIC_AUGMENT if mode in ("simclr", "vicreg") else DEFAULT_AUGMENT
     labels = {"contrastive": "Fetal-ECG-FM (physics augs, GA-aware NCE)",
               "simclr": "SimCLR (generic augs, InfoNCE)",
-              "vicreg": "VICReg (physics augs, variance-covariance)",
+              "vicreg": "VICReg (generic augs, variance-covariance)",
               "mae": f"MAE (masked signal modelling, mask_ratio={args.mask_ratio})"}
-    print(f"Mode: {labels[mode]}")
+    print(f"Mode: {labels[mode]}  seed={args.seed}  norm={args.input_norm}  "
+          f"transformer={not args.no_transformer}")
     history = []
     for epoch in range(1, args.epochs + 1):
         random.shuffle(pretrain_items)
+        vic_parts = None
         if mode == "mae":
             loss = train_one_epoch_mae(model, decoder, pretrain_items, optimizer, device,
                                        epoch, args.batch_size, args.mask_ratio)
         elif mode == "vicreg":
-            loss = train_one_epoch_vicreg(model, pretrain_items, optimizer, augment,
-                                          device, epoch, args.batch_size)
+            loss, vic_parts = train_one_epoch_vicreg(
+                model, pretrain_items, optimizer, augment, device, epoch, args.batch_size)
         else:
             loss = train_one_epoch(model, pretrain_items, optimizer, augment, device,
                                    args.temperature, epoch, batch_size=args.batch_size,
                                    use_gestation=(mode == "contrastive"))
         scheduler.step()
-        history.append({"epoch": epoch, "loss": loss})
-        print(f"Epoch {epoch:3d}/{args.epochs}  loss={loss:.4f}")
+        rec = {"epoch": epoch, "loss": loss}
+        if vic_parts:
+            rec.update(vic_parts)
+        history.append(rec)
+        extra = ""
+        if vic_parts:
+            extra = (f"  sim={vic_parts['sim']:.3f} std={vic_parts['std']:.3f} "
+                     f"cov={vic_parts['cov']:.3f} std_mean={vic_parts['std_mean']:.3f}")
+        print(f"Epoch {epoch:3d}/{args.epochs}  loss={loss:.4f}{extra}")
         if epoch % 10 == 0:
             ckpt = out_dir / f"checkpoint_epoch{epoch}.pt"
             torch.save({

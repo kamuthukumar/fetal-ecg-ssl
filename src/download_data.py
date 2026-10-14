@@ -29,6 +29,12 @@ SPECS = {
         records=[f"a{n:02d}" for n in range(1, 76)],
         exts=["dat", "hea", "fqrs"],
     ),
+    # set-b has no public fetal QRS reference; used only as unlabelled data.
+    "cinc2013b": dict(
+        url=f"{BASE}/challenge-2013/1.0.0/set-b",
+        records=[f"b{n:02d}" for n in range(100)],
+        exts=["dat", "hea"],
+    ),
     "ninfea": dict(
         url=f"{BASE}/ninfea/1.0.0/wfdb_format_ecg_and_respiration",
         records=[str(n) for n in range(1, 61)],

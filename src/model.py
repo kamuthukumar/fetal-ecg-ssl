@@ -92,20 +92,36 @@ class TransformerEncoder(nn.Module):
 class FetalECGFM(nn.Module):
     """Full foundation model."""
     def __init__(self, n_input_channels=4, d_model=256, nhead=8, num_layers=4,
-                 proj_dim=64, dropout=0.1, pool=32):
+                 proj_dim=64, dropout=0.1, pool=32, use_transformer=True,
+                 input_norm="instance"):
         super().__init__()
+        self.use_transformer = use_transformer
+        self.input_norm = input_norm
         # Multi-scale CNN front-end
         self.frontend = MultiScaleConv(n_input_channels, out_ch=128, pool=pool)
         # Channel mixer: 1x1 conv to project to d_model
         self.channel_mixer = nn.Conv1d(self.frontend.out_ch, d_model, kernel_size=1)
-        # Temporal transformer
-        self.transformer = TransformerEncoder(d_model, nhead, num_layers, dim_feedforward=512, dropout=dropout)
+        # Temporal transformer (optional; CNN-only ablation skips it)
+        self.transformer = TransformerEncoder(
+            d_model, nhead, num_layers, dim_feedforward=512, dropout=dropout
+        ) if use_transformer else None
         # Projection head for contrastive learning
         self.proj = nn.Sequential(
             nn.Linear(d_model, d_model),
             nn.ReLU(),
             nn.Linear(d_model, proj_dim),
         )
+
+    def _normalise(self, x):
+        """x: (B, C, T). instance = per-window per-channel; none = identity."""
+        if self.input_norm == "none":
+            return x
+        if self.input_norm == "layernorm":
+            mu = x.mean(dim=(1, 2), keepdim=True)
+            sd = x.std(dim=(1, 2), keepdim=True)
+            return (x - mu) / (sd + 1e-5)
+        # default: per-window, per-channel instance normalisation
+        return (x - x.mean(dim=2, keepdim=True)) / (x.std(dim=2, keepdim=True) + 1e-5)
 
     def token_features(self, x):
         """Return per-token transformer features (B, T', d_model).
@@ -116,10 +132,12 @@ class FetalECGFM(nn.Module):
         # Per-window, per-channel instance normalisation: makes the encoder
         # amplitude-invariant (abdominal fECG amplitude varies with electrode
         # placement and gestation) and well-scaled for masked reconstruction.
-        x = (x - x.mean(dim=2, keepdim=True)) / (x.std(dim=2, keepdim=True) + 1e-5)
+        x = self._normalise(x)
         x = self.frontend(x)
         x = self.channel_mixer(x)
         x = x.transpose(1, 2)
+        if self.transformer is None:
+            return x
         return self.transformer(x)
 
     def forward(self, x, return_embedding=False):
@@ -181,11 +199,13 @@ class SignalDecoder(nn.Module):
         return self.net(x)  # (B, C, T)
 
 
-def vicreg_loss(z_a, z_b, sim_coeff=25.0, std_coeff=25.0, cov_coeff=1.0):
+def vicreg_loss(z_a, z_b, sim_coeff=25.0, std_coeff=25.0, cov_coeff=1.0,
+                return_parts=False):
     """VICReg loss (Bardes, Ponce & LeCun, 2022): invariance + variance +
     covariance. Explicitly prevents representation collapse by forcing each
     embedding dimension to keep unit variance and to be decorrelated.
 
+    Default coefficients follow Bardes et al. (λ=25, μ=25, ν=1).
     z_a, z_b: (B, D) embeddings of two views (NOT L2-normalised).
     """
     B, D = z_a.shape
@@ -202,7 +222,16 @@ def vicreg_loss(z_a, z_b, sim_coeff=25.0, std_coeff=25.0, cov_coeff=1.0):
     cov_b = (zb.T @ zb) / (B - 1)
     off = lambda C: (C - torch.diag(torch.diag(C))).pow(2).sum() / D
     cov = off(cov_a) + off(cov_b)
-    return sim_coeff * sim + std_coeff * std + cov_coeff * cov
+    loss = sim_coeff * sim + std_coeff * std + cov_coeff * cov
+    if return_parts:
+        return loss, {
+            "sim": float(sim.detach()),
+            "std": float(std.detach()),
+            "cov": float(cov.detach()),
+            "std_mean": float(0.5 * (std_a.mean() + std_b.mean()).detach()),
+            "lambda": sim_coeff, "mu": std_coeff, "nu": cov_coeff,
+        }
+    return loss
 
 
 class CrossModalProjector(nn.Module):

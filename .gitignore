@@ -13,6 +13,10 @@ results/**/embeddings.npy
 results/benchmark/emb_*.npy
 # keep small JSON results and figures; keep model checkpoints out of git
 results/foundation*/*.pt
+results/rev_*/
+results/*.log
+results/**/*.log
+results/revision/new_ckpts/tmp/
 # synthetic figures from the deprecated (fabricated) pipeline — not part of the paper
 results/manuscript_figs/
 results/poc/
