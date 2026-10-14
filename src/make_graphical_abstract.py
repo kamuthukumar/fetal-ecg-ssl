@@ -8,6 +8,7 @@ from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT.parent / "GraphicalAbstract.pdf"
+REPO_PNG = ROOT / "results" / "real_figs" / "graphical_abstract.png"
 
 C = {"random": "#9aa0a6", "simclr": "#f4a259", "vicreg": "#5aa469", "mae": "#2d6cdf"}
 
@@ -18,8 +19,8 @@ def f1(k):
 vals = {k: f1(k) for k in ["random", "simclr", "vicreg", "mae"]}
 
 fig = plt.figure(figsize=(11, 5.2))
-fig.suptitle("Masked signal modelling for non-invasive fetal ECG:\n"
-             "what self-supervision buys at ~100-recording scale",
+fig.suptitle("Self-supervised pre-training for non-invasive fetal ECG:\n"
+             "a cross-dataset fetal QRS-transfer benchmark",
              fontsize=14, fontweight="bold", y=0.99)
 
 # --- Left panel: frozen-probe F1 bar chart ---
@@ -45,20 +46,21 @@ def box(y, title, body, fc):
 
 box(0.72, "1.  Naive contrastive SSL collapses",
     "embedding effective rank 2.5 of 64  →  worse than random", "#fdecea")
-box(0.40, "2.  Per-window instance norm fixes it",
-    "rank recovers to ~10; masked modelling beats random\n"
-    "+0.055 $F_1$ (p<1e-7); 5% of labels ≈ random with 100%", "#e8f0fe")
-box(0.08, "3.  But full fine-tuning erases the gap",
-    "MAE-init 0.50 vs random-init 0.50 (p=0.53):\n"
-    "pre-training buys label efficiency, not a higher ceiling", "#eef7ee")
+box(0.40, "2.  All objectives beat random after normalisation",
+    "masked 0.33 vs SimCLR 0.32 (paired p=0.14): tied;\n"
+    "masked modelling also remains stable without normalisation", "#e8f0fe")
+box(0.08, "3.  The benefit is regime-specific",
+    "full fine-tuning: 0.50 vs 0.50 (p=0.53); supervised U-Net: 0.92\n"
+    "pre-training improves frozen features, not the detector ceiling", "#eef7ee")
 for y0, y1 in [(0.72, 0.60), (0.40, 0.28)]:
     axR.add_patch(FancyArrowPatch((0.5, y0), (0.5, y1), transform=axR.transAxes,
                   arrowstyle="-|>", mutation_scale=14, lw=1.4, color="#444"))
 
-fig.text(0.5, 0.015, "First reproducible self-supervised benchmark for fetal ECG  ·  "
+fig.text(0.5, 0.015, "68-record open pre-training set · 75-record held-out QRS benchmark  ·  "
          "code: github.com/kamuthukumar/fetal-ecg-ssl",
          ha="center", fontsize=8.5, style="italic", color="#333")
 
 fig.savefig(OUT, bbox_inches="tight")
 fig.savefig(OUT.with_suffix(".png"), dpi=150, bbox_inches="tight")
-print("wrote", OUT, "and", OUT.with_suffix(".png"))
+fig.savefig(REPO_PNG, dpi=150, bbox_inches="tight")
+print("wrote", OUT, OUT.with_suffix(".png"), "and", REPO_PNG)

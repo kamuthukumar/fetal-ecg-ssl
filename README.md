@@ -36,6 +36,10 @@ scores, revision analyses, and 600 dpi figures are included.
 
 ![Nine-method fetal QRS comparison](results/real_figs/fig_baselines.png)
 
+## Graphical abstract
+
+![Graphical abstract](results/real_figs/graphical_abstract.png)
+
 ## Evaluation protocol
 
 - **Pre-training:** NInFEA (60 records, 39 subjects) plus eight NI-FECG files.
